@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 import uuid
+from string import Template
 
 class UserModel(models.Model):
     # Fields
@@ -15,4 +16,9 @@ class UserModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
 
     def __str__(self):
-        return '{self.last_name}, {self.first_name}. {self.id}'
+        # TODO(jason-h-hu): I think there's a less clumsy way to do this
+        return Template('$last_name, $first_name. $id').substitute(
+            last_name=self.last_name, 
+            first_name=self.first_name, 
+            id=self.id
+        )
