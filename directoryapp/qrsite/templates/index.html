@@ -1,1 +1,10 @@
-<div>Hello</div>
+<!-- TODO(jason-h-hu): How do we plug Angular into the Django framework? -->
+<div>
+  <form action="" method="post">
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+    </table>
+    <input type="submit" value="Submit" />
+  </form>
+</div>
