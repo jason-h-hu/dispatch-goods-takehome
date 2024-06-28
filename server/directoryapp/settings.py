@@ -39,14 +39,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'qrsite.apps.QrsiteConfig'
+    'qrsite.apps.QrsiteConfig',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # TODO(jason-h-hu): This was disabled as a hack for the assessment. This
+    # would be enabled if this were part of real production code.
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -70,8 +74,13 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'directoryapp.wsgi.application'
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",
+]
 
+CORS_ALLOW_ALL_ORIGINS = True
+
+WSGI_APPLICATION = 'directoryapp.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
