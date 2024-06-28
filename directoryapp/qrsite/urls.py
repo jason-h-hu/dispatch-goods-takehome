@@ -1,8 +1,8 @@
 from django.urls import path
-from . import views
+from .views import form_view, UserView, get_qr
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('users/<uuid:id>', views.get_user, name='users'),
-    path('qr/<uuid:id>.png', views.get_qr, name='qr'),
+    path('', form_view, name='index'),
+    path('users/<uuid:pk>', UserView.as_view(), name='user'),
+    path('qr/<uuid:id>.png', get_qr, name='qr'),
 ]
