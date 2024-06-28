@@ -3,6 +3,9 @@ import csv
 from django.shortcuts import render
 from ..models import UserModel
 from django import forms
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import api_view
 
 class CSVFileForm(forms.Form):
     file = forms.FileField(
@@ -36,28 +39,37 @@ class CSVFileForm(forms.Form):
             raise forms.ValidationError(f"CSV has missing values in rows '{misformatted_rows}'")
 
         return cleaned_rows
+
+def _handle_request_and_update_users(request):
+    if not request.method == 'POST':
+        return [CSVFileForm(), []]
+
+    form = CSVFileForm(
+        expected_headers=['firstName', 'lastName', 'age', 'address'], 
+        data=request.POST, 
+        files=request.FILES
+    )
+    if not form.is_valid():
+        return [form, []]
     
+    users = [
+        UserModel.objects.create(
+            first_name=row['firstName'], 
+            last_name=row['lastName'], 
+            age=row['age'], 
+            address=row['address'],
+        ) for row in form.cleaned_data['file']
+    ]
+    return [form, users]
+
 def form_view(request):
-    if request.method == 'POST':
-        form = CSVFileForm(
-            expected_headers=['firstName', 'lastName', 'age', 'address'], 
-            data=request.POST, 
-            files=request.FILES
-        )
-        if form.is_valid():
-            users = [
-                UserModel.objects.create(
-                    first_name=row['firstName'], 
-                    last_name=row['lastName'], 
-                    age=row['age'], 
-                    address=row['address'],
-                ) for row in form.cleaned_data['file']
-            ]
-            context = {'form': form, 'user_ids': [user.id for user in users]}
-            return render(request, 'index.html', context=context)
-        else:
-            context = {'form': form}
-            return render(request, 'index.html', context=context)
-    
-    context = {'form': CSVFileForm()}
+    [form , users]= _handle_request_and_update_users(request)
+    context = {'form': form, 'user_ids': [user.id for user in users]}
     return render(request, 'index.html', context=context)
+
+@api_view(['POST'])
+def api_form_view(request):
+    [form , users]= _handle_request_and_update_users(request)
+    if form.is_valid():
+        return Response({'user_ids': [user.id for user in users]}, status=status.HTTP_201_CREATED)
+    return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)

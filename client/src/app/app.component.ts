@@ -8,31 +8,36 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [RouterOutlet, CommonModule],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
 })
 export class AppComponent {
   url: string = 'http://127.0.0.1:8000';
   selectedFile: File | undefined;
-  ids: string[] = [];
+  qrs: string[] = [];
+  errors: string[] = [];
 
   constructor(private http: HttpClient) {}
 
   onFileSelected(event: any) {
     this.selectedFile = event.target.files[0];
+    this.errors = [];
   }
 
   onSubmit(event: any) {
     event.preventDefault();
     if (this.selectedFile) {
+      this.errors = [];
       const uploadData = new FormData();
       uploadData.append('file', this.selectedFile, this.selectedFile.name);
-      this.http.post(this.url, uploadData).subscribe(
+      this.http.post([this.url, 'api'].join('/'), uploadData).subscribe(
         (response) => {
-          console.log('File uploaded successfully:', response);
-          this.ids = (response as any).ids as string[]; // Assuming the response contains an array of IDs
+          const userIds: string[] = (response as any).user_ids || [];
+          this.qrs = userIds.map((userId) =>
+            [this.url, 'qr', `${userId}.png`].join('/')
+          );
         },
         (error) => {
-          console.error('Error uploading file:', error);
+          this.errors =
+            'error' in error ? Object.values(error.error) : [error.message];
         }
       );
     }

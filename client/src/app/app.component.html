@@ -1,13 +1,21 @@
-<form (submit)="onSubmit($event)">
-  <input type="file" (change)="onFileSelected($event)" accept=".csv" />
-  <button type="submit">Upload File</button>
-</form>
-
-<div *ngIf="ids.length > 0">
-  <h3>Uploaded IDs:</h3>
-  <ul>
-    <li *ngFor="let id of ids">
-      <img src="{{ url }}/{{ id }}" />
+<div>
+  <form (submit)="onSubmit($event)">
+    <input
+      type="file"
+      (change)="onFileSelected($event)"
+      accept=".csv"
+      required="true"
+    />
+    <button type="submit" [disabled]="!selectedFile">Upload File</button>
+  </form>
+  <ul *ngIf="errors.length > 0">
+    <li *ngFor="let error of errors">
+      {{ error }}
+    </li>
+  </ul>
+  <ul *ngIf="qrs.length > 0">
+    <li *ngFor="let qr of qrs">
+      <img src="{{ qr }}" />
     </li>
   </ul>
 </div>
