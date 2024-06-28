@@ -86,7 +86,6 @@ if 'DATABASE_URL' in os.environ:
         conn_max_age=500,
         conn_health_checks=True,
     )
-    print(DATABASES['default'])
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

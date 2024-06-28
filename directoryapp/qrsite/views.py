@@ -5,6 +5,7 @@ from qrsite.forms import CSVFileForm
 from django.shortcuts import render
 from django.http import HttpResponse, Http404
 from .models import UserModel
+from string import Template
 
 def index(request):
     if request.method == 'POST':
@@ -30,10 +31,13 @@ def get_user_or_throw(id):
         raise Http404('User does not exist')
 
 def get_qr(request, id):
+    host = request.META['HTTP_HOST']
     get_user_or_throw(id)
     qr = qrcode.QRCode()
-    # TODO(jason-h-hu): Encode the URL
-    qr.add_data(id)
+    qr.add_data(Template('$host/users/$id').substitute(
+        host=host,
+        id=id
+    ))
     img = qr.make_image()
     byte_io = io.BytesIO()
     img.save(byte_io, 'PNG')
