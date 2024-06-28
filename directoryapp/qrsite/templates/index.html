@@ -7,4 +7,13 @@
     </table>
     <input type="submit" value="Submit" />
   </form>
+  {% if user_ids %}
+  <ul>
+    {% for user_id in user_ids %}
+    <li>
+      <img src="qr/{{ user_id }}.png" />
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
 </div>

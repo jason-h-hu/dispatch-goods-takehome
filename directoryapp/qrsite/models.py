@@ -16,7 +16,6 @@ class UserModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
 
     def __str__(self):
-        # TODO(jason-h-hu): I think there's a less clumsy way to do this
         return Template('$last_name, $first_name. $id').substitute(
             last_name=self.last_name, 
             first_name=self.first_name, 
