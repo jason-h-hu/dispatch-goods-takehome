@@ -4,7 +4,6 @@ import uuid
 from string import Template
 
 class UserModel(models.Model):
-    # Fields
     # NOTE: https://shinesolutions.com/2018/01/08/falsehoods-programmers-believe-about-names-with-examples/
     first_name = models.CharField(max_length=64, help_text='aka personal name')
     last_name = models.CharField(max_length=64, help_text='aka family name, surname')

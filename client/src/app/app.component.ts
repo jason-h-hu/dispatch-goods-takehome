@@ -37,7 +37,9 @@ export class AppComponent {
         },
         (error) => {
           this.errors =
-            'error' in error ? Object.values(error.error) : [error.message];
+            'error' in error && error.status !== 500
+              ? Object.values(error.error)
+              : [error.message];
         }
       );
     }
